@@ -1,10 +1,9 @@
 
-
-import React from 'react';
-import { Play, Users, RefreshCw, Trash2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { Play, Users, RefreshCw, Trash2, Info } from 'lucide-react';
 import { Button } from '../common/Button';
 import { SavedSession } from '../../lib/types';
-import { formatTime } from '../../lib/utils'; // Assuming formatTime handles timestamps
+import { AboutModal } from './AboutModal';
 
 interface HomePageProps {
   onSandboxClick: () => void;
@@ -23,8 +22,12 @@ export const HomePage: React.FC<HomePageProps> = ({
   onRejoinSession,
   onClearSessions
 }) => {
+  const [showAbout, setShowAbout] = useState(false);
+
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-6 animate-fade-in relative">
+      <AboutModal isOpen={showAbout} onClose={() => setShowAbout(false)} />
+
       <div className="space-y-4">
         <Button
           onClick={onCreateGameClick}
@@ -40,6 +43,15 @@ export const HomePage: React.FC<HomePageProps> = ({
         >
           <Users size={20} /> Join Game
         </Button>
+      </div>
+
+      <div className="flex justify-center">
+        <button 
+          onClick={() => setShowAbout(true)}
+          className="text-xs text-slate-500 hover:text-romantic-600 flex items-center gap-1 transition-colors underline decoration-slate-300 underline-offset-2"
+        >
+          <Info size={14} /> What is this game? (Privacy & Info)
+        </button>
       </div>
 
       {recentSessions.length > 0 && (

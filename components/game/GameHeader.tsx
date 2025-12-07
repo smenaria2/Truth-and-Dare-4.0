@@ -1,5 +1,4 @@
 
-
 import React from 'react';
 import { LogOut, Video, AlertCircle, Trophy, Minimize2, Maximize2 } from 'lucide-react';
 import { Button } from '../common/Button';
@@ -87,7 +86,7 @@ export const GameHeader: React.FC<GameHeaderProps> = ({
             <LogOut size={18} />
           </Button>
           <div className="flex flex-col">
-            <span className="text-[10px] font-bold text-romantic-500 tracking-wider">TRUTH & DARE</span>
+            <span className="text-[10px] font-bold text-romantic-500 tracking-wider">TRUTH X DARE</span>
             {!isTestMode && <span className="text-[10px] text-slate-400">Code: {gameCode}</span>}
           </div>
         </div>

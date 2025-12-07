@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { GameRoom } from './components/GameRoom';
 import { IntensityLevel, GameMode, SavedSession } from './lib/types';
@@ -116,7 +117,7 @@ export default function App() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-6 text-slate-800">
       <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-sm text-center border-t-8 border-romantic-600">
-        <h1 className="text-4xl font-black mb-2 text-romantic-700">Truth & Dare</h1>
+        <h1 className="text-4xl font-black mb-2 text-romantic-700 tracking-tight">Truth X Dare</h1>
         <p className="text-slate-500 mb-8 text-sm">Couples Edition</p>
 
         {screen === 'home' && (

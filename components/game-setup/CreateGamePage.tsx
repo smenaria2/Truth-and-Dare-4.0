@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { generateGameCode } from '../../lib/utils';
 import { INTENSITY_LEVELS, RANDOM_MODE_INTENSITY_ORDER } from '../../lib/constants';
@@ -59,7 +60,7 @@ export const CreateGamePage: React.FC<CreateGamePageProps> = ({
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'Truth and Dare',
+          title: 'Truth X Dare',
           text: `Join my game! Code: ${gameCode}`,
           url: url,
         });
