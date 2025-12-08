@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Play, Users, RefreshCw, Trash2, Info } from 'lucide-react';
+import { Play, Users, RefreshCw, Trash2, Info, Mail } from 'lucide-react';
 import { Button } from '../common/Button';
 import { SavedSession } from '../../lib/types';
 import { AboutModal } from './AboutModal';
@@ -45,13 +45,19 @@ export const HomePage: React.FC<HomePageProps> = ({
         </Button>
       </div>
 
-      <div className="flex justify-center">
+      <div className="flex justify-center gap-6">
         <button 
           onClick={() => setShowAbout(true)}
           className="text-xs text-slate-500 hover:text-romantic-600 flex items-center gap-1 transition-colors underline decoration-slate-300 underline-offset-2"
         >
-          <Info size={14} /> What is this game? (Privacy & Info)
+          <Info size={14} /> Privacy & Info
         </button>
+        <a 
+          href="mailto:smenaria2@gmail.com?subject=Truth X Dare App Feedback"
+          className="text-xs text-slate-500 hover:text-romantic-600 flex items-center gap-1 transition-colors underline decoration-slate-300 underline-offset-2"
+        >
+          <Mail size={14} /> Feedback
+        </a>
       </div>
 
       {recentSessions.length > 0 && (
