@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { LogOut, Video, AlertCircle, Trophy, Minimize2, Maximize2 } from 'lucide-react';
+import { LogOut, Video, AlertCircle, Trophy, Minimize2, Maximize2, Zap, ZapOff } from 'lucide-react';
 import { Button } from '../common/Button';
 import { TutorialTooltip } from '../TutorialTooltip';
 import { INTENSITY_LEVELS } from '../../lib/constants';
@@ -29,6 +29,8 @@ interface GameHeaderProps {
   connectionStatus: 'connected' | 'disconnected' | 'reconnecting';
   isCallMinimized?: boolean;
   toggleCallMinimize?: () => void;
+  autoSelectTurn?: boolean;
+  toggleAutoSelect?: () => void;
 }
 
 export const GameHeader: React.FC<GameHeaderProps> = ({
@@ -52,7 +54,9 @@ export const GameHeader: React.FC<GameHeaderProps> = ({
   callStatus,
   connectionStatus,
   isCallMinimized,
-  toggleCallMinimize
+  toggleCallMinimize,
+  autoSelectTurn,
+  toggleAutoSelect
 }) => {
 
   const connectionStatusColor = 
@@ -92,12 +96,30 @@ export const GameHeader: React.FC<GameHeaderProps> = ({
         </div>
         
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1 mr-2">
+          <div className="flex items-center gap-1 mr-2 hidden sm:flex">
             <div className={cn("w-2 h-2 rounded-full", connectionStatusColor, connectionStatus === 'connected' && 'animate-pulse')}></div>
             <span className={cn("text-[10px] font-bold uppercase", connectionStatusTextColor)}>
               {isTestMode ? "Sandbox" : connectionStatusText}
             </span>
           </div>
+
+          {/* Auto-Select Toggle */}
+          {toggleAutoSelect && (
+             <TutorialTooltip content={autoSelectTurn ? "Auto-select is ON" : "Turn on Auto-select"} isVisible={!!isTestMode}>
+                <Button 
+                   onClick={toggleAutoSelect}
+                   variant="ghost"
+                   size="sm"
+                   className={cn(
+                     "p-1.5 rounded-lg border transition-all",
+                     autoSelectTurn ? "bg-amber-100 text-amber-600 border-amber-200" : "bg-slate-50 text-slate-400 border-slate-100"
+                   )}
+                   aria-label={autoSelectTurn ? "Disable auto-select" : "Enable auto-select"}
+                >
+                   {autoSelectTurn ? <Zap size={18} /> : <ZapOff size={18} />}
+                </Button>
+             </TutorialTooltip>
+          )}
 
           <TutorialTooltip content="Change question spice level here!" isVisible={!!isTestMode}>
             <div className="relative">

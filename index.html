@@ -5,6 +5,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Truth X Dare - Couples Game</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" crossorigin="anonymous">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
     <script src="https://unpkg.com/mqtt@5.3.5/dist/mqtt.min.js"></script>
@@ -12,6 +15,10 @@
       tailwind.config = {
         theme: {
           extend: {
+            fontFamily: {
+              script: ['"Great Vibes"', 'cursive'],
+              serif: ['"Playfair Display"', 'serif'],
+            },
             colors: {
               romantic: {
                 50: '#fff1f2',
@@ -25,6 +32,11 @@
                 800: '#9f1239',
                 900: '#881337',
                 950: '#4c0519',
+              },
+              gold: {
+                400: '#fbbf24',
+                500: '#f59e0b',
+                600: '#d97706',
               },
             },
             animation: {
@@ -91,7 +103,8 @@
     "react/": "https://aistudiocdn.com/react@^19.2.0/",
     "react": "https://aistudiocdn.com/react@^19.2.0",
     "peerjs": "https://aistudiocdn.com/peerjs@^1.5.5",
-    "tailwind-merge": "https://aistudiocdn.com/tailwind-merge@^3.4.0"
+    "tailwind-merge": "https://aistudiocdn.com/tailwind-merge@^3.4.0",
+    "html-to-image": "https://aistudiocdn.com/html-to-image@^1.11.11"
   }
 }
 </script>

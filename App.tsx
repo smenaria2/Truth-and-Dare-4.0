@@ -5,9 +5,10 @@ import { IntensityLevel, GameMode, SavedSession } from './lib/types';
 import { HomePage } from './components/home/HomePage';
 import { CreateGamePage } from './components/game-setup/CreateGamePage';
 import { JoinGamePage } from './components/game-setup/JoinGamePage';
+import { GetQuestionsPage } from './components/GetQuestionsPage';
 import { Sparkles } from 'lucide-react';
 
-type AppScreen = 'home' | 'create' | 'join' | 'play';
+type AppScreen = 'home' | 'create' | 'join' | 'play' | 'questions';
 
 export default function App() {
   const [screen, setScreen] = useState<AppScreen>('home');
@@ -16,7 +17,6 @@ export default function App() {
   const [gameCode, setGameCode] = useState('');
   const [intensity, setIntensity] = useState<IntensityLevel>('friendly');
   const [gameMode, setGameMode] = useState<GameMode>('standard');
-  const [isTestMode, setIsTestMode] = useState(false);
   const [recentSessions, setRecentSessions] = useState<SavedSession[]>([]);
 
   // Load recent sessions on mount
@@ -58,9 +58,8 @@ export default function App() {
     setScreen('join');
   };
 
-  const handleSandboxClick = () => {
-    setIsTestMode(true);
-    handleCreateGame();
+  const handleGetQuestionsClick = () => {
+    setScreen('questions');
   };
 
   const enterLobby = () => {
@@ -93,7 +92,6 @@ export default function App() {
 
   const resetAppState = () => {
     setScreen('home');
-    setIsTestMode(false);
     setName('');
     setGameCode('');
     setIntensity('friendly');
@@ -108,7 +106,6 @@ export default function App() {
         playerName={name}
         intensity={intensity}
         gameMode={gameMode}
-        isTestMode={isTestMode}
         onExit={resetAppState}
       />
     );
@@ -116,13 +113,13 @@ export default function App() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-6 text-slate-800">
-      <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-sm text-center border-t-8 border-romantic-600">
-        <h1 className="text-4xl font-black mb-2 text-romantic-700 tracking-tight">Truth X Dare</h1>
-        <p className="text-slate-500 mb-8 text-sm">Couples Edition</p>
+      <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-sm text-center border-t-8 border-romantic-600 transition-all duration-300">
+        <h1 className="text-4xl font-black mb-2 text-romantic-700 tracking-tight font-script">Truth X Dare</h1>
+        <p className="text-slate-500 mb-8 text-sm font-serif">Couples Edition</p>
 
         {screen === 'home' && (
           <HomePage
-            onSandboxClick={handleSandboxClick} 
+            onGetQuestionsClick={handleGetQuestionsClick} 
             onCreateGameClick={handleCreateGame}
             onJoinGameClick={handleJoinSetup}
             recentSessions={recentSessions}
@@ -142,7 +139,7 @@ export default function App() {
             gameMode={gameMode}
             setGameMode={setGameMode}
             onStartGame={enterLobby}
-            isTestMode={isTestMode}
+            isTestMode={false}
           />
         )}
 
@@ -156,15 +153,12 @@ export default function App() {
           />
         )}
 
+        {screen === 'questions' && (
+          <GetQuestionsPage onBack={resetAppState} />
+        )}
+
         <div className="mt-8 flex justify-center">
-          {screen === 'home' ? (
-             <button
-              onClick={handleSandboxClick}
-              className="text-xs font-medium text-slate-400 hover:text-slate-600 transition-colors flex items-center gap-1"
-            >
-              <Sparkles size={12} /> Sandbox Mode
-            </button>
-          ) : (
+          {screen !== 'home' && (
             <button
               onClick={resetAppState}
               className="text-slate-400 hover:text-slate-600 text-sm"

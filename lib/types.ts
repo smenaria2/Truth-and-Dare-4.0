@@ -1,5 +1,4 @@
 
-
 export type IntensityLevel = "friendly" | "romantic" | "hot" | "very_hot";
 export type PlayerRole = "host" | "guest";
 export type GamePhase = "waiting" | "playing" | "reviewing";
@@ -55,6 +54,7 @@ export interface GameState {
   scores: { host: number; guest: number };
   chatMessages: ChatMessage[];
   lastUpdated: number;
+  autoSelectTurn?: boolean; // New: Auto-select Truth/Dare
 }
 
 export interface P2PMessage {
@@ -80,7 +80,8 @@ export interface P2PMessage {
     | "READ_RECEIPT"
     | "HEARTBEAT"
     | "REQUEST_PLAYER_INFO" // New: Request partner details
-    | "PARTNER_DISCONNECTED"; // New: LWT message
+    | "PARTNER_DISCONNECTED" // New: LWT message
+    | "TOGGLE_AUTO_SELECT"; // New: Sync auto-select setting
   payload: any;
 }
 

@@ -1,12 +1,12 @@
 
 import React, { useState } from 'react';
-import { Play, Users, RefreshCw, Trash2, Info, Mail } from 'lucide-react';
+import { Play, Users, RefreshCw, Trash2, Info, Mail, Sparkles } from 'lucide-react';
 import { Button } from '../common/Button';
 import { SavedSession } from '../../lib/types';
 import { AboutModal } from './AboutModal';
 
 interface HomePageProps {
-  onSandboxClick: () => void;
+  onGetQuestionsClick: () => void;
   onCreateGameClick: () => void;
   onJoinGameClick: () => void;
   recentSessions: SavedSession[];
@@ -15,7 +15,7 @@ interface HomePageProps {
 }
 
 export const HomePage: React.FC<HomePageProps> = ({
-  onSandboxClick,
+  onGetQuestionsClick,
   onCreateGameClick,
   onJoinGameClick,
   recentSessions,
@@ -43,6 +43,16 @@ export const HomePage: React.FC<HomePageProps> = ({
         >
           <Users size={20} /> Join Game
         </Button>
+        <div className="flex justify-center">
+            <Button
+            onClick={onGetQuestionsClick}
+            variant="outline"
+            size="sm"
+            className="w-auto flex items-center justify-center gap-2 py-2 px-6 border border-gold-400 text-gold-600 hover:bg-gold-50 rounded-full"
+            >
+            <Sparkles size={16} /> Get Questions
+            </Button>
+        </div>
       </div>
 
       <div className="flex justify-center gap-6">

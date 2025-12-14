@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useP2P } from '../hooks/useP2P';
 import { GameState, IntensityLevel, P2PMessage, PlayerRole, TurnRecord, ChatMessage, MediaType, CallStatus, GameMode, SavedSession } from '../lib/types';
@@ -76,6 +77,7 @@ export const GameRoom: React.FC<GameRoomProps> = ({ role, gameCode, playerName, 
       scores: { host: 0, guest: 0 },
       chatMessages: [],
       lastUpdated: Date.now(),
+      autoSelectTurn: false,
     };
   });
 
@@ -348,6 +350,14 @@ export const GameRoom: React.FC<GameRoomProps> = ({ role, gameCode, playerName, 
            addToast({ title: 'Request Denied', message: 'Partner declined intensity change.', type: 'error' });
         }
         break;
+      case 'TOGGLE_AUTO_SELECT':
+         setGameState(prev => ({ ...prev, autoSelectTurn: msg.payload.enabled }));
+         addToast({ 
+             title: msg.payload.enabled ? 'Auto-Select Enabled' : 'Auto-Select Disabled', 
+             message: msg.payload.enabled ? 'Turns will be picked automatically!' : 'Manual selection enabled', 
+             type: 'info' 
+         });
+         break;
     }
   }, [gameState, role, addToast, handleEndCall, broadcastState, isUserAtBottom, triggerFloatingEmoji, isTestMode, sendSystemNotification]);
 
@@ -360,6 +370,43 @@ export const GameRoom: React.FC<GameRoomProps> = ({ role, gameCode, playerName, 
     callPeerRef.current = callPeer;
     retryRef.current = retry;
   }, [sendMessage, callPeer, retry]);
+
+  // --- Auto-Select Logic ---
+  const startTurn = useCallback((type: 'truth' | 'dare') => {
+    const newTurn: TurnRecord = {
+      id: Math.random().toString(36).substr(2, 9),
+      playerRole: role,
+      questionText: '',
+      type,
+      status: 'selecting',
+      timestamp: Date.now()
+    };
+    broadcastState({ ...gameState, activeTurn: newTurn, phase: 'playing' });
+  }, [broadcastState, gameState, role]);
+
+  useEffect(() => {
+    // Only run if it's my turn, there is no active turn, and auto-select is enabled
+    if (!gameState.activeTurn && gameState.currentTurn === role && gameState.autoSelectTurn && !isTestMode) {
+       const timer = setTimeout(() => {
+           const type = Math.random() > 0.5 ? 'truth' : 'dare';
+           startTurn(type);
+       }, 1500); // 1.5s delay for better UX
+       return () => clearTimeout(timer);
+    }
+  }, [gameState.activeTurn, gameState.currentTurn, gameState.autoSelectTurn, role, startTurn, isTestMode]);
+
+  const toggleAutoSelect = () => {
+    const newVal = !gameState.autoSelectTurn;
+    setGameState(prev => ({ ...prev, autoSelectTurn: newVal }));
+    if (!isTestMode) {
+       sendMessageRef.current({ type: 'TOGGLE_AUTO_SELECT', payload: { enabled: newVal } });
+    }
+    addToast({ 
+         title: newVal ? 'Auto-Select Enabled' : 'Auto-Select Disabled', 
+         message: newVal ? 'Turns will be picked automatically!' : 'Manual selection enabled', 
+         type: 'info' 
+    });
+  };
 
   // --- Read Receipt on Scroll ---
   useEffect(() => {
@@ -444,18 +491,6 @@ export const GameRoom: React.FC<GameRoomProps> = ({ role, gameCode, playerName, 
     const emoji = RANDOM_EMOJIS[Math.floor(Math.random() * RANDOM_EMOJIS.length)];
     triggerFloatingEmoji(emoji);
     if (!isTestMode) sendMessageRef.current({ type: 'PING_EMOJI', payload: { emoji } });
-  };
-
-  const startTurn = (type: 'truth' | 'dare') => {
-    const newTurn: TurnRecord = {
-      id: Math.random().toString(36).substr(2, 9),
-      playerRole: role,
-      questionText: '',
-      type,
-      status: 'selecting',
-      timestamp: Date.now()
-    };
-    broadcastState({ ...gameState, activeTurn: newTurn, phase: 'playing' });
   };
 
   const sendQuestion = () => {
@@ -776,6 +811,8 @@ export const GameRoom: React.FC<GameRoomProps> = ({ role, gameCode, playerName, 
         connectionStatus={connectionStatus}
         isCallMinimized={isCallMinimized}
         toggleCallMinimize={handleToggleCallMinimize}
+        autoSelectTurn={gameState.autoSelectTurn}
+        toggleAutoSelect={toggleAutoSelect}
       />
 
       {/* --- TIMELINE --- */}
@@ -889,7 +926,7 @@ export const GameRoom: React.FC<GameRoomProps> = ({ role, gameCode, playerName, 
         
         {!gameState.activeTurn && !canAct && (
           <div className="text-center py-2 text-xs text-slate-400 bg-slate-50 border-b border-slate-100">
-             Partner's turn to pick...
+             {gameState.autoSelectTurn ? "Selecting turn automatically..." : "Partner's turn to pick..."}
           </div>
         )}
 
