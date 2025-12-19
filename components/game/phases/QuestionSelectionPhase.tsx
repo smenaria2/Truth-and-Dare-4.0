@@ -1,11 +1,12 @@
 
-import React from 'react';
-import { Clock, Shuffle, Edit2, X } from 'lucide-react';
+import React, { useState } from 'react';
+import { Clock, Shuffle, Edit2, X, Sparkles, Loader2 } from 'lucide-react';
 import { Button } from '../../common/Button';
 import { TutorialTooltip } from '../../TutorialTooltip';
 import { TurnRecord, IntensityLevel, PlayerRole } from '../../../lib/types';
 import { cn } from '../../../lib/utils';
-import { QUESTIONS } from '../../../lib/constants'; // Import QUESTIONS
+import { QUESTIONS } from '../../../lib/constants';
+import { generateAIQuestion } from '../../../lib/gemini';
 
 interface QuestionSelectionPhaseProps {
   activeTurn: TurnRecord;
@@ -42,26 +43,30 @@ export const QuestionSelectionPhase: React.FC<QuestionSelectionPhaseProps> = ({
   isTestMode,
   timerOptions,
 }) => {
-
+  const [isAiLoading, setIsAiLoading] = useState(false);
   const placeholderQuestion = QUESTIONS[intensityLevel][activeTurn.type][0] || "Select a question...";
   
-  // Ensure draftQuestion is initialized if it's empty and not in custom mode
   React.useEffect(() => {
     if (!isCustomQuestion && !draftQuestion && activeTurn.questionText === '') {
-      shuffleQuestion(); // Auto-select an initial question
+      shuffleQuestion();
     }
   }, [isCustomQuestion, draftQuestion, activeTurn.questionText, shuffleQuestion]);
 
   const toggleCustomMode = () => {
-    if (isCustomQuestion) {
-        // Switch back to random mode
-        setIsCustomQuestion(false);
-        shuffleQuestion();
-    } else {
-        // Switch to custom mode (editing current question)
-        setIsCustomQuestion(true);
-        // draftQuestion already holds the current question text, so we don't clear it.
+    setIsCustomQuestion(!isCustomQuestion);
+    if (!isCustomQuestion === false) {
+       shuffleQuestion();
     }
+  };
+
+  const handleAiSuggest = async () => {
+    setIsAiLoading(true);
+    const aiQ = await generateAIQuestion(activeTurn.type, intensityLevel);
+    if (aiQ) {
+      setDraftQuestion(aiQ);
+      setIsCustomQuestion(true);
+    }
+    setIsAiLoading(false);
   };
 
   return (
@@ -71,76 +76,80 @@ export const QuestionSelectionPhase: React.FC<QuestionSelectionPhaseProps> = ({
       </div>
       <div className="p-6">
         {canAct ? (
-          <TutorialTooltip content="Pick a fun question or write your own!" isVisible={!!isTestMode} position="top" className="w-full block">
-            <div className="space-y-4">
-              <div className="flex justify-between items-center text-sm text-slate-500">
-                <span>Select question for partner</span>
-                {!isTestMode && (
-                  <div className="flex items-center gap-2">
-                    <Clock size={14} aria-hidden="true" />
-                    <select 
-                      value={selectedTimer} 
-                      onChange={(e) => setSelectedTimer(Number(e.target.value))}
-                      className="bg-slate-100 rounded p-1 text-xs border border-slate-200 outline-none focus:ring-2 focus:ring-romantic-400"
-                      aria-label="Select time limit for question"
-                    >
-                      {timerOptions.map(t => (
-                        <option key={t} value={t}>{t === 0 ? 'No Limit' : `${t}s`}</option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-              </div>
-              
-              {isCustomQuestion ? (
-                <div className="relative">
-                    <textarea 
-                    className="w-full p-4 pr-10 rounded-xl border focus:outline-none focus:ring-2 min-h-[100px] text-lg font-medium bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 focus:ring-romantic-500"
-                    placeholder="Type your own question..."
-                    value={draftQuestion}
-                    onChange={(e) => setDraftQuestion(e.target.value)}
-                    aria-label="Custom question input"
-                    />
-                    {draftQuestion && (
-                        <button 
-                            onClick={() => setDraftQuestion('')}
-                            className="absolute top-2 right-2 p-1.5 text-slate-400 hover:text-white bg-slate-700/50 hover:bg-slate-700 rounded-lg transition-colors"
-                            aria-label="Clear question text"
-                        >
-                            <X size={16} />
-                        </button>
-                    )}
-                </div>
-              ) : (
-                <div className="bg-slate-50 p-6 rounded-xl border border-slate-200 min-h-[120px] flex items-center justify-center text-center" aria-live="polite">
-                   <p className="text-lg font-medium text-slate-800">{draftQuestion || placeholderQuestion}</p>
-                </div>
-              )}
-
-              <div className="flex gap-2">
-                <Button onClick={shuffleQuestion} variant="secondary" className="p-3" aria-label="Shuffle question">
-                   <Shuffle size={20} />
-                </Button>
-                <Button 
-                    onClick={toggleCustomMode} 
-                    variant="secondary" 
-                    className={cn("p-3 transition-colors", isCustomQuestion && "bg-romantic-100 text-romantic-600 border-romantic-200")} 
-                    aria-label={isCustomQuestion ? "Switch to random question" : "Edit current question"}
+          <div className="space-y-4">
+            <div className="flex justify-between items-center text-sm text-slate-500">
+              <span className="font-bold text-slate-400 text-[10px] uppercase">Pick a challenge</span>
+              <div className="flex items-center gap-2">
+                <Clock size={14} className="text-slate-400" />
+                <select 
+                  value={selectedTimer} 
+                  onChange={(e) => setSelectedTimer(Number(e.target.value))}
+                  className="bg-slate-50 rounded px-2 py-1 text-xs border border-slate-200 outline-none focus:ring-1 focus:ring-romantic-400 font-bold text-slate-600"
                 >
-                   <Edit2 size={20} />
-                </Button>
-                <Button onClick={sendQuestion} disabled={!draftQuestion.trim()} variant="primary" className="flex-1">
-                   Ask Question
-                </Button>
+                  {timerOptions.map(t => (
+                    <option key={t} value={t}>{t === 0 ? 'No Limit' : `${t}s`}</option>
+                  ))}
+                </select>
               </div>
             </div>
-          </TutorialTooltip>
+            
+            {isCustomQuestion ? (
+              <div className="relative group">
+                  <textarea 
+                  className="w-full p-4 pr-10 rounded-xl border focus:outline-none focus:ring-2 min-h-[120px] text-lg font-medium bg-slate-50 border-slate-200 text-slate-800 placeholder:text-slate-300 focus:ring-romantic-500 transition-all shadow-inner"
+                  placeholder="Type your own question..."
+                  value={draftQuestion}
+                  onChange={(e) => setDraftQuestion(e.target.value)}
+                  />
+                  {draftQuestion && (
+                      <button 
+                          onClick={() => setDraftQuestion('')}
+                          className="absolute top-3 right-3 p-1.5 text-slate-300 hover:text-red-400 bg-white rounded-lg shadow-sm transition-colors border border-slate-100"
+                      >
+                          <X size={16} />
+                      </button>
+                  )}
+              </div>
+            ) : (
+              <div className="bg-slate-50 p-6 rounded-xl border-2 border-dashed border-slate-200 min-h-[120px] flex items-center justify-center text-center relative overflow-hidden">
+                 <p className="text-lg font-bold text-slate-700 leading-tight">{draftQuestion || placeholderQuestion}</p>
+                 <div className="absolute top-2 right-2 opacity-10">
+                    <Sparkles size={40} className={activeTurn.type === 'truth' ? "text-blue-400" : "text-orange-400"} />
+                 </div>
+              </div>
+            )}
+
+            <div className="flex gap-2">
+              <Button onClick={shuffleQuestion} variant="secondary" className="p-3 bg-slate-100 hover:bg-slate-200 text-slate-600 border-none rounded-xl" title="Shuffle Questions">
+                 <Shuffle size={20} />
+              </Button>
+              <Button onClick={handleAiSuggest} disabled={isAiLoading} variant="secondary" className="p-3 bg-amber-50 hover:bg-amber-100 text-amber-600 border-amber-200 border rounded-xl relative" title="AI Suggestion">
+                 {isAiLoading ? <Loader2 size={20} className="animate-spin" /> : <Sparkles size={20} />}
+                 <span className="absolute -top-1 -right-1 flex h-2 w-2">
+                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                   <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                 </span>
+              </Button>
+              <Button 
+                  onClick={toggleCustomMode} 
+                  variant="secondary" 
+                  className={cn("p-3 transition-colors border rounded-xl", isCustomQuestion ? "bg-romantic-100 text-romantic-600 border-romantic-300" : "bg-slate-100 text-slate-600 border-none")}
+                  title="Edit Question"
+              >
+                 <Edit2 size={20} />
+              </Button>
+              <Button onClick={sendQuestion} disabled={!draftQuestion.trim()} variant="primary" className="flex-1 shadow-lg shadow-romantic-200 font-black tracking-wide">
+                 ASK PARTNER
+              </Button>
+            </div>
+          </div>
         ) : (
-          <div className="text-center py-8">
-            <p className="text-lg text-slate-600 mb-2">You chose <strong>{activeTurn.type}</strong></p>
-            <p className="text-slate-400 animate-pulse">
-              {isTestMode ? "Acting as partner to select a question..." : "Partner is selecting a question for you..."}
-            </p>
+          <div className="text-center py-10 flex flex-col items-center gap-4">
+            <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center animate-pulse">
+               {activeTurn.type === 'truth' ? <Clock className="text-blue-400" /> : <Clock className="text-orange-400" />}
+            </div>
+            <p className="text-lg font-bold text-slate-600">Waiting for {currentTurnRole}...</p>
+            <p className="text-xs text-slate-400 max-w-[200px]">They are picking a juicy {activeTurn.type} for you to answer.</p>
           </div>
         )}
       </div>
