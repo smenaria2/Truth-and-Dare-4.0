@@ -241,7 +241,7 @@ export const GetQuestionsPage: React.FC<GetQuestionsPageProps> = ({ onBack }) =>
                 <div className="flex items-center gap-1">
                    <Heart fill="#fbbf24" size={16} className="text-gold-400" />
                 </div>
-                <p className="text-[8px] sm:text-[10px] text-gold-400/80 font-black tracking-widest uppercase">TRUTHXDARE.APP</p>
+                <p className="text-[8px] sm:text-[10px] text-gold-400/80 font-black tracking-widest uppercase">TRUTHXDARE.VERCEL.APP</p>
              </div>
              
              <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-10 pointer-events-none mix-blend-overlay"></div>
