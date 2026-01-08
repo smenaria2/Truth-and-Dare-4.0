@@ -3,11 +3,14 @@ declare const puter: any;
 
 /**
  * Ensures the user is signed in to Puter to use AI services.
+ * Uses attempt_temp_user_creation to allow seamless onboarding without immediate sign-up.
+ * Note: This must be called from within a user-initiated event (like a button click)
+ * to prevent browsers from blocking the sign-in popup.
  */
 async function ensurePuterAuth() {
   if (!puter.auth.isSignedIn()) {
     try {
-      await puter.auth.signIn();
+      await puter.auth.signIn({ attempt_temp_user_creation: true });
     } catch (error) {
       console.error("Puter Auth Error:", error);
     }
@@ -24,7 +27,7 @@ export async function generateAIQuestion(type: 'truth' | 'dare', intensity: stri
     const prompt = `You are an expert in couples intimacy and fun games. Generate a single, unique, and engaging ${type} question for a couples game.
       The intensity level is "${intensity}".${keywordContext}
 
-      CRITICAL INSTRUCTION: If the provided keywords are in a language other than English, generate the question IN THAT SAME LANGUAGE. Also, adapt the context and tone to match the cultural nuances associated with that language (e.g., if Hindi keywords, use Hindi language and Indian cultural traditions/context). If no specific language is detected in keywords, default to English.
+      CRITICAL INSTRUCTION: If the provided keywords are in a language other than English, generate the question IN THAT SAME LANGUAGE. Also, adapt the context and tone to match the cultural nuances associated with that language. If no specific language is detected in keywords, default to English.
       
       Intensity Guide:
       - Friendly: Sweet, lighthearted, focuses on fun memories.

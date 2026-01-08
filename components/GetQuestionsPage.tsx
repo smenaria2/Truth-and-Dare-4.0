@@ -10,8 +10,9 @@ import { useToast } from '../hooks/useToast';
 import { ToastDisplay } from './common/ToastDisplay';
 import { generateAIQuestion } from '../lib/puter';
 
-const VERSION = "4.6.1";
+const VERSION = "4.7.0";
 const VERSION_HISTORY = [
+  "4.7.0: Implemented seamless AI onboarding with automatic temporary user accounts.",
   "4.6.1: AI Magic now supports multi-language generation based on keywords.",
   "4.6.0: Enhanced question card layout for better visibility and sharing.",
   "4.5.0: Refined AI Privacy notice behavior and card aesthetics.",
@@ -254,7 +255,7 @@ export const GetQuestionsPage: React.FC<GetQuestionsPageProps> = ({ onBack }) =>
              style={{ 
                backgroundColor: '#881337',
                backgroundImage: 'radial-gradient(circle at center, #9e1239 0%, #700c2a 100%)',
-               padding: '24px 20px' // Optimized padding for space
+               padding: '24px 20px' 
              }}
           >
              {/* Ornate Inner Borders */}
@@ -272,14 +273,14 @@ export const GetQuestionsPage: React.FC<GetQuestionsPageProps> = ({ onBack }) =>
                 <h2 className="font-script text-[32px] sm:text-[36px] text-gold-400 drop-shadow-md leading-none select-none tracking-wide">Truth X Dare</h2>
              </div>
 
-             {/* Content Body - Optimized for space and visibility */}
+             {/* Content Body */}
              <div className="z-20 w-full flex-1 flex flex-col items-center justify-center my-2 overflow-hidden min-h-0">
                  {/* TYPE LABEL */}
                  <span className="shrink-0 font-serif font-black text-gold-500 block mb-3 text-[12px] sm:text-[14px] uppercase tracking-[0.4em] border-b border-gold-400/30 pb-2 w-1/2">
                      {currentQuestion.type}
                  </span>
                  
-                 {/* THE CHALLENGE TEXT - Flexible height with min-h-0 */}
+                 {/* THE CHALLENGE TEXT */}
                  <div className="w-full flex items-center justify-center flex-1 min-h-0 px-2">
                      <p className={cn(
                          "font-serif text-white italic drop-shadow-md break-words w-full",
