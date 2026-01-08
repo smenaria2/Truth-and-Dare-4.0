@@ -10,8 +10,9 @@ import { useToast } from '../hooks/useToast';
 import { ToastDisplay } from './common/ToastDisplay';
 import { generateAIQuestion } from '../lib/puter';
 
-const VERSION = "4.6.0";
+const VERSION = "4.6.1";
 const VERSION_HISTORY = [
+  "4.6.1: AI Magic now supports multi-language generation based on keywords.",
   "4.6.0: Enhanced question card layout for better visibility and sharing.",
   "4.5.0: Refined AI Privacy notice behavior and card aesthetics.",
   "4.4.0: Improved card aesthetics and added AI Privacy notice.",

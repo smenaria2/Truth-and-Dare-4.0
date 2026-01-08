@@ -23,10 +23,15 @@ export async function generateAIQuestion(type: 'truth' | 'dare', intensity: stri
     const keywordContext = keywords ? ` Incorporate these themes or keywords: "${keywords}".` : "";
     const prompt = `You are an expert in couples intimacy and fun games. Generate a single, unique, and engaging ${type} question for a couples game.
       The intensity level is "${intensity}".${keywordContext}
+
+      CRITICAL INSTRUCTION: If the provided keywords are in a language other than English, generate the question IN THAT SAME LANGUAGE. Also, adapt the context and tone to match the cultural nuances associated with that language (e.g., if Hindi keywords, use Hindi language and Indian cultural traditions/context). If no specific language is detected in keywords, default to English.
+      
+      Intensity Guide:
       - Friendly: Sweet, lighthearted, focuses on fun memories.
       - Romantic: Deep emotional connection, future dreams, meaningful sentiments.
       - Hot: Spicy attraction, physical teasing, suggestive desires.
       - Very Hot: Explicit, high-intimacy, bold fantasies.
+      
       Return ONLY the question text. Do not use quotation marks. Keep it concise (under 25 words) to ensure it fits on a game card.`;
     
     const response = await puter.ai.chat(prompt);
