@@ -4,7 +4,7 @@ import { CheckCircle, XCircle, Heart, Sparkles, Loader2, MessageSquareText } fro
 import { Button } from '../../common/Button';
 import { TurnRecord, PlayerRole } from '../../../lib/types';
 import { cn } from '../../../lib/utils';
-import { generateAIReaction } from '../../../lib/gemini';
+import { generateAIReaction } from '../../../lib/puter';
 
 interface ReviewPhaseProps {
   activeTurn: TurnRecord;

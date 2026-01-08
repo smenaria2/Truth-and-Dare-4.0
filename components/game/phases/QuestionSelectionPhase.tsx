@@ -6,7 +6,7 @@ import { TutorialTooltip } from '../../TutorialTooltip';
 import { TurnRecord, IntensityLevel, PlayerRole } from '../../../lib/types';
 import { cn } from '../../../lib/utils';
 import { QUESTIONS } from '../../../lib/constants';
-import { generateAIQuestion } from '../../../lib/gemini';
+import { generateAIQuestion } from '../../../lib/puter';
 
 interface QuestionSelectionPhaseProps {
   activeTurn: TurnRecord;

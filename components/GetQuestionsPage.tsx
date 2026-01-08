@@ -8,10 +8,11 @@ import { Download, Share2, RefreshCcw, ArrowLeft, Heart, Sparkles, Loader2, Wand
 import { cn } from '../lib/utils';
 import { useToast } from '../hooks/useToast';
 import { ToastDisplay } from './common/ToastDisplay';
-import { generateAIQuestion } from '../lib/gemini';
+import { generateAIQuestion } from '../lib/puter';
 
-const VERSION = "4.2.2";
+const VERSION = "4.3.0";
 const VERSION_HISTORY = [
+  "4.3.0: Switched to Puter.js for AI services.",
   "4.2.2: Enhanced text scaling and fit for generated cards.",
   "4.2.1: Smart scaling for long questions.",
   "4.2.0: Added AI-powered question generation.",
