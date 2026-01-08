@@ -24,10 +24,11 @@ export async function generateAIQuestion(type: 'truth' | 'dare', intensity: stri
   await ensurePuterAuth();
   try {
     const keywordContext = keywords ? ` Incorporate these themes or keywords: "${keywords}".` : "";
-    const prompt = `You are an expert in couples intimacy and fun games. Generate a single, unique, and engaging ${type} question for a couples game.
+    const prompt = `You are an expert in couples truth and dare game. Generate a single, unique, and engaging ${type} question for a long distance couple game.
       The intensity level is "${intensity}".${keywordContext}
 
-      CRITICAL INSTRUCTION: If the provided keywords are in a language other than English, generate the question IN THAT SAME LANGUAGE. Also, adapt the context and tone to match the cultural nuances associated with that language. If no specific language is detected in keywords, default to English.
+      CRITICAL INSTRUCTION: If the provided keywords are in a language other than English(roman), generate the question IN THAT SAME LANGUAGE. Also, adapt the context and tone to match the cultural nuances associated with that language. If no specific language is detected in keywords, default to English.
+      Be creative. 
       
       Intensity Guide:
       - Friendly: Sweet, lighthearted, focuses on fun memories.
